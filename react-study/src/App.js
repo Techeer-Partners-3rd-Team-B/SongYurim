@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+import {Outlet } from "react-router-dom";
 import './App.css';
 import React, { Component } from 'react';
 import {createGlobalStyle} from 'styled-components';
@@ -7,6 +7,7 @@ import TodoHead from './components/TodoHead';
 import TodoList from './components/TodoList';
 import TodoCreate from './components/TodoCreate';
 
+
 const GlobalStyle = createGlobalStyle`
   body {
     // 페이지에 회색배경
@@ -14,17 +15,18 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-
 function App() {
   return (
     <>
       <GlobalStyle/> {/* styled-components로 css적용 */}
       <TodoTemplate>
-        <TodoHead></TodoHead>
-        <TodoList>
-        </TodoList>
-        <TodoCreate></TodoCreate>
+          <TodoHead></TodoHead>
+          <TodoList>
+          </TodoList>
+          <TodoCreate></TodoCreate>
+          <Outlet/>
       </TodoTemplate>
+      
     </>
   );
 }

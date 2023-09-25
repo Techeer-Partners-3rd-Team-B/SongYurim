@@ -53,6 +53,8 @@ const InsertFormPositioner = styled.div`
   position: absolute;  //TodoTemplate position=relative
 `;
 
+
+//회색 박스 전체
 const InsertForm = styled.form`
   background: #f8f9fa;
   padding-left: 32px;
