@@ -5,6 +5,7 @@ import NewsList from './components/NewsList';
 
 function App(){
   const [category, setCategory] = useState('all')
+  //onSelect 함수를 통해 category 값이 업데이트
   const onSelect = useCallback(Category => setCategory(Category), [])
   return(
     <>
