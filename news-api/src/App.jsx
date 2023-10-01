@@ -2,17 +2,15 @@ import { React, useCallback, useState } from 'react';
 import './App.css';
 import Categories from './components/Categories';
 import NewsList from './components/NewsList';
+import { Route } from 'react-router-dom/cjs/react-router-dom.min';
+import NewsPage from './pages/NewsPage';
 
 function App(){
-  const [category, setCategory] = useState('all')
-  //onSelect 함수를 통해 category 값이 업데이트
-  const onSelect = useCallback(Category => setCategory(Category), [])
+  // const [category, setCategory] = useState('all')
+  // //onSelect 함수를 통해 category 값이 업데이트
+  // const onSelect = useCallback(Category => setCategory(Category), [])
   return(
-    <>
-    {/* props로 카테고리 state와 함수를 넘겨줌 */}
-      <Categories category={category} onSelect={onSelect}/>
-      <NewsList category={category}/>
-    </>
+    <Route path = "/:category?" component={NewsPage}/>
   );
 }
 
