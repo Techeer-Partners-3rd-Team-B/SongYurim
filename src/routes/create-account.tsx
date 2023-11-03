@@ -11,10 +11,10 @@ import GithubButton from "../components/gitjub-btn";
 export default function CreateAccount() {
     const navigate = useNavigate();
     const [isLoading, setLoading] = useState(false);
-    const [name, SetName] = useState("");
-    const [email, SetEmail] = useState("");
-    const [password, SetPassword] = useState("");
-    const [error, SetError] = useState("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
 
     const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -23,28 +23,29 @@ export default function CreateAccount() {
         } = e
 
         if(name ==="name"){
-            SetName(value);
+            setName(value);
         } else if(name==="email"){
-            SetEmail(value);
+            setEmail(value);
         } else if(name==="password"){
-            SetPassword(value);
+            setPassword(value);
         }
     }
 
     const onSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault;
-        if(isLoading|| name==="" || email ==="" || password==="") return;
+        e.preventDefault();
+        if(isLoading || name==="" || email ==="" || password==="") return;
         try {
             setLoading(true);
-            const credentials = await createUserWithEmailAndPassword(auth, email, password)
+            const credentials = await createUserWithEmailAndPassword(auth, email, password);
             console.log(credentials.user);
+            
             await updateProfile(credentials.user, {
                 displayName: name,
             });
             navigate("/");
         } catch (e) {
             if(e instanceof FirebaseError){
-                SetError(e.message)
+                setError(e.message)
             }
         } finally {
             setLoading(false);
@@ -69,6 +70,7 @@ export default function CreateAccount() {
                 <Input type="submit" value={isLoading? "Loading..." : "Create Account"}/>
             </Form>
             {error !== ""? <Error>{error}</Error>: null}
+            
             <Switcher>
                 Already have an account?{" "}
                 <Link to="/login">Log in &rarr;</Link>

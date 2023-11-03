@@ -7,28 +7,28 @@ import { Error, Form, Input, Switcher, Title, Wrapper } from "../components/auth
 import GithubButton from "../components/gitjub-btn";
 
 
-export default function CreateAccount() {
+export default function Login() {
     const navigate = useNavigate();
     const [isLoading, setLoading] = useState(false);
-    const [email, SetEmail] = useState("");
-    const [password, SetPassword] = useState("");
-    const [error, SetError] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
 
     const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const {
             target:{name, value},
         } = e
-
+                     
         if(name==="email"){
-            SetEmail(value);
-        } else if(name==="password"){
-            SetPassword(value);
+            setEmail(value);
+        }else if(name==="password"){
+            setPassword(value);
         }
     }
 
     const onSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault;
+        e.preventDefault();
         if(isLoading || email ==="" || password==="") return;
         try {
             setLoading(true);
@@ -36,7 +36,7 @@ export default function CreateAccount() {
             navigate("/");
         } catch (e) {
             if(e instanceof FirebaseError){
-                SetError(e.message)
+                setError(e.message)
             }
         } finally {
             setLoading(false);
