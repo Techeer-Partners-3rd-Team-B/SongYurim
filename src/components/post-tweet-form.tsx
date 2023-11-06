@@ -95,7 +95,7 @@ export default function PostTweetForm(){
             if(file && file.size < 1024 * 1024){
                 const locationRef = ref(
                     storage,
-                    `tweets/${user.uid}-${user.displayName}/${doc.id}` //이미지 업로드 될 url 지정
+                    `tweets/${user.uid}/${doc.id}` //이미지 업로드 될 url 지정
                 );
                 const result = await uploadBytes(locationRef, file); //uploadBytes()는 UploadResult에 대한 프로미스를 반환
 
@@ -125,7 +125,7 @@ export default function PostTweetForm(){
                 value={tweet} 
                 placeholder="What is happening?"
             />
-            <AttachFileButton htmlFor="file">{file? "Photo addded" : "Add photo"}</AttachFileButton>
+            <AttachFileButton htmlFor="file">{file? "Photo addded ✅" : "Add photo"}</AttachFileButton>
             <AttachFileInput 
                 onChange={onFileChange} 
                 type="file" 
