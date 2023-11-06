@@ -1,5 +1,7 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import styled from "styled-components"
+import { auth, db } from "../firebase";
 
 const Form = styled.form`
     display: flex;
@@ -65,16 +67,39 @@ export default function PostTweetForm(){
 
     const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>)=>{
         setTweet(e.target.value);
-    }
+    };
     const onFileChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
         const { files } = e.target; //업로드된 파일들을 배열의 형태로 반환
         if(files && files.length === 1){
             setFile(files[0]);
         }
-    }
+    };
+
+    const onSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const user = auth.currentUser
+
+        if(!user|| isLoading || tweet==="" || tweet.length> 180) return;
+
+        try{
+            setLoading(true);
+            await addDoc(collection(db, "tweets"),{
+                tweet, //A reference to the collection to add this document to.
+                createdAt:Date.now(),
+                username:user.displayName || "Anonymous",
+                userId: user.uid,
+            })
+        } catch(e) {
+            console.log(e);
+        }finally {
+            setLoading(false);
+        }
+        
+    };
 
     return (
-        <Form>
+        <Form onSubmit={onSubmit}>
             <TextArea
                 rows={5}
                 maxLength={180} 
