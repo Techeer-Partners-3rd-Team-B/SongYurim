@@ -1,7 +1,8 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import styled from "styled-components"
-import { auth, db } from "../firebase";
+import { auth, db, storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Form = styled.form`
     display: flex;
@@ -84,12 +85,29 @@ export default function PostTweetForm(){
 
         try{
             setLoading(true);
-            await addDoc(collection(db, "tweets"),{
-                tweet, //A reference to the collection to add this document to.
+            const doc = await addDoc(collection(db, "tweets"),{
+                tweet, 
                 createdAt:Date.now(),
                 username:user.displayName || "Anonymous",
                 userId: user.uid,
-            })
+            });
+
+            if(file && file.size < 1024 * 1024){
+                const locationRef = ref(
+                    storage,
+                    `tweets/${user.uid}-${user.displayName}/${doc.id}` //이미지 업로드 될 url 지정
+                );
+                const result = await uploadBytes(locationRef, file); //uploadBytes()는 UploadResult에 대한 프로미스를 반환
+
+                const url = await getDownloadURL(result.ref);
+                await updateDoc(doc, {
+                    photo: url,
+                });
+            }
+
+            setTweet("");
+            setFile(null);
+
         } catch(e) {
             console.log(e);
         }finally {
