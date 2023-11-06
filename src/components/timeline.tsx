@@ -1,8 +1,9 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, limit, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { db } from "../firebase";
 import Tweet from "./tweet";
+import { Unsubscribe } from "firebase/auth";
 
 
 export interface ITweet {
@@ -14,36 +15,62 @@ export interface ITweet {
     createdAt:number;
 }
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+`;
 
 export default function Timeline() {
     const [tweets, setTweet] = useState<ITweet[]>([]);
 
-    const fetchTweets = async() => {
-        const tweetsQuery = query(
-            collection(db, "tweets"),
-            orderBy("createdAt","desc")
-        );
-        const snapshot = await getDocs(tweetsQuery);
-
-        const tweets = snapshot.docs.map((doc)=>{
-            //map으로 반환된 각 배열을 불러와서
-            const {tweet, createdAt, userId, username, photo} = doc.data();
-            //아래와 같은 형식으로 데이터를 반환
-            return {
-                id: doc.id, 
-                tweet, 
-                createdAt, 
-                userId, 
-                username, 
-                photo,
-            };
-        });
-        setTweet(tweets);
-    };
     useEffect(()=>{
+        let unsubscribe : Unsubscribe | null = null;
+        const fetchTweets = async() => {
+            const tweetsQuery = query(
+                collection(db, "tweets"),
+                orderBy("createdAt","desc"),
+                limit(25)
+            );
+
+            // const snapshot = await getDocs(tweetsQuery);
+            // const tweets = snapshot.docs.map((doc)=>{
+            //     //map으로 반환된 각 배열을 불러와서
+            //     const {tweet, createdAt, userId, username, photo} = doc.data();
+            //     //아래와 같은 형식으로 데이터를 반환
+            //     return {
+            //         id: doc.id, 
+            //         tweet, 
+            //         createdAt, 
+            //         userId, 
+            //         username, 
+            //         photo,
+            //     };
+            // });
+
+            unsubscribe = await onSnapshot(tweetsQuery, (snapshot)=>{
+                const tweets = snapshot.docs.map((doc)=>{
+                    //map으로 반환된 각 배열을 불러와서
+                    const {tweet, createdAt, userId, username, photo} = doc.data();
+                    //아래와 같은 형식으로 데이터를 반환
+                    return {
+                        id: doc.id, 
+                        tweet, 
+                        createdAt, 
+                        userId, 
+                        username, 
+                        photo,
+                    };
+                });
+            setTweet(tweets);
+            });
+        };
+
         fetchTweets();
-    },[]) 
+        return ()=>{
+            unsubscribe && unsubscribe();
+        }
+    },[]);
 
     return (
         <Wrapper>
